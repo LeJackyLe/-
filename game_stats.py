@@ -11,7 +11,9 @@ class GameStats():
         self.game_active = False
         
         # 在任何情况下都不应该重置最高得分
-        self.high_score = 0
+        with open('data\high_score.txt','r') as file_hc:
+            high_score_str = file_hc.read()
+            self.high_score = int(high_score_str)
         
     def reset_stats(self):
         """初始化在游戏运行期间可能变化的统计信息"""
