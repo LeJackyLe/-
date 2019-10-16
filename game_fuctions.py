@@ -33,6 +33,8 @@ def check_events(ai_settings,screen,stats,sb,play_button,ship,aliens,bullets):
     """ÏìÓ¦°´¼ü"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            with open('data\high_score.txt','w') as file_hc:
+                file_hc.write(str(stats.high_score))
             sys.exit()
             
         elif event.type == pygame.KEYDOWN:
