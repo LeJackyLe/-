@@ -17,6 +17,11 @@ def check_keydown_events(event,ai_settings,screen,stats,ship,bullets):
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
         fire_bullet(ai_settings,screen,ship,bullets)
+    elif event.key == pygame.K_p:
+        if not stats.pause_active:
+            stats.pause_active = True
+        else:
+            stats.pause_active = False
     elif event.key == pygame.K_ESCAPE:
         with open('data\high_score.txt','w') as file_hc:
             file_hc.write(str(stats.high_score))    
@@ -29,7 +34,8 @@ def check_keyup_events(event,ship):
     elif event.key == pygame.K_LEFT:
         ship.moving_left = False
 
-def check_events(ai_settings,screen,stats,sb,play_button,ship,aliens,bullets):
+def check_events(ai_settings,screen,stats,sb,play_button,pause_button,ship,
+        aliens,bullets):
     """响应按键"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -39,7 +45,6 @@ def check_events(ai_settings,screen,stats,sb,play_button,ship,aliens,bullets):
             
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event,ai_settings,screen,stats,ship,bullets)
-            check_keydown_events(event,ai_settings,screen,stats,ship,bullets)
                 
         elif event.type == pygame.KEYUP:
             check_keyup_events(event,ship)
@@ -48,9 +53,10 @@ def check_events(ai_settings,screen,stats,sb,play_button,ship,aliens,bullets):
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(ai_settings,screen,stats,sb,play_button,ship,
                 aliens,bullets,mouse_x,mouse_y)
+            check_pause_button(stats,pause_button,mouse_x,mouse_y)
             
 def check_play_button(ai_settings,screen,stats,sb,play_button,ship,aliens,
-    bullets,mouse_x,mouse_y):
+        bullets,mouse_x,mouse_y):
     """在玩家单击Play按钮时开始新游戏"""
     button_clicked = play_button.rect.collidepoint(mouse_x,mouse_y)
     if button_clicked and not stats.game_active:
@@ -58,7 +64,7 @@ def check_play_button(ai_settings,screen,stats,sb,play_button,ship,aliens,
         ai_settings.initialize_dynamic_settings()
         
         # 隐藏光标
-        pygame.mouse.set_visible(False)
+        pygame.mouse.set_visible(True)
         
         # 重置游戏统计信息
         stats.reset_stats()
@@ -77,6 +83,14 @@ def check_play_button(ai_settings,screen,stats,sb,play_button,ship,aliens,
         # 创建一群新的外星人，并让飞船居中
         create_fleet(ai_settings,screen,ship,aliens)
         ship.center_ship()
+        
+def check_pause_button(stats,pause_button,mouse_x,mouse_y):
+    """在玩家单击Pause按钮时暂停游戏"""
+    button_clicked = pause_button.rect.collidepoint(mouse_x,mouse_y)
+    if button_clicked and not stats.pause_active:
+        stats.pause_active = True
+    elif button_clicked and stats.pause_active:
+        stats.pause_active = False
         
         
 
@@ -146,7 +160,7 @@ def change_fleet_direction(ai_settings,aliens):
 
 
 def check_bullet_alien_collisions(ai_settings,screen,stats,sb,ship,aliens,
-    bullets):
+        bullets):
     """响应子弹和外星人的碰撞"""
     # 删除发生碰撞的子弹和外星人
     collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
@@ -241,21 +255,25 @@ def update_aliens(ai_settings,screen,stats,sb,ship,aliens,bullets):
     # 检查是否有外星人到达屏幕底端
     check_aliens_bottom(ai_settings,screen,stats,sb,ship,aliens,bullets)
 
-def update_screen(ai_settings,screen,stats,sb,ship,aliens,bullets,play_button):
-        """更新屏幕上的图像，并切换到新屏幕"""
-        screen.fill(ai_settings.bg_color)
-        # 在飞船和外星人后面重绘所有子弹
-        for bullet in bullets.sprites():
-            bullet.draw_bullet()
-        ship.blitme() 
-        aliens.draw(screen) 
-        
-        # 显示得分
-        sb.show_score()
-        
-        # 如果游戏处于非活动状态，就绘制Play按钮
-        if not stats.game_active:
-            play_button.draw_button()       
-        
-        # 让最近绘制的屏幕可见
-        pygame.display.flip()
+def update_screen(ai_settings,screen,stats,sb,ship,aliens,bullets,play_button,
+        pause_button):
+    """更新屏幕上的图像，并切换到新屏幕"""
+    screen.fill(ai_settings.bg_color)
+    # 在飞船和外星人后面重绘所有子弹
+    for bullet in bullets.sprites():
+        bullet.draw_bullet()
+    ship.blitme() 
+    aliens.draw(screen) 
+    
+    # 显示得分
+    sb.show_score()
+    
+    # 如果游戏处于非活动状态，就绘制Play按钮
+    if not stats.game_active:
+        play_button.draw_button() 
+    
+    # 绘制Pause按钮
+    pause_button.draw_button()
+    
+    # 让最近绘制的屏幕可见
+    pygame.display.flip()

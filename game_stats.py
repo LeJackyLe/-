@@ -10,6 +10,9 @@ class GameStats():
         # 游戏刚启动时处于非活动状态
         self.game_active = False
         
+        # 暂停
+        self.pause_active = False
+        
         # 在任何情况下都不应该重置最高得分
         with open('data\high_score.txt','r') as file_hc:
             high_score_str = file_hc.read()

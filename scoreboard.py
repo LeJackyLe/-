@@ -15,7 +15,7 @@ class Scoreboard():
         
         # 显示得分信息时使用的字体设置
         self.text_color = (30,30,30)
-        self.font = pygame.font.SysFont(None,48)
+        self.font = pygame.font.SysFont(None,36)
         
         # 准备包含最高得分和当前得分和等级和生命值的图像
         self.prep_score()
@@ -34,7 +34,7 @@ class Scoreboard():
         # 将得分放在屏幕右上角
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
-        self.score_rect.top = self.screen_rect.top
+        self.score_rect.top = self.screen_rect.top + 20
         
     def prep_high_score(self):
         """将最高得分转换为渲染的图像"""
@@ -46,24 +46,24 @@ class Scoreboard():
         # 将最高得分放在屏幕顶部中央
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
-        self.high_score_rect.top = self.screen_rect.top
+        self.high_score_rect.top = self.screen_rect.top + 20
         
     def prep_level(self):
         """将等级转换为渲染的图像"""
-        self.level_image = self.font.render("Level" + str(self.stats.level),True,
-            self.text_color,self.ai_settings.bg_color)
+        self.level_image = self.font.render("Level" + str(self.stats.level),
+            True,self.text_color,self.ai_settings.bg_color)
             
         # 将等级放在得分左侧
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.left - 200
-        self.level_rect.top = self.screen_rect.top
+        self.level_rect.top = self.screen_rect.top + 20
         
     def prep_ships(self):
         """显示还余下多少艘飞船"""
         self.ships = Group()
         for ship_number in range(self.stats.ships_left):
             ship = Ship(self.ai_settings,self.screen)
-            ship.rect.x = 10 + ship_number * ship.rect.width
+            ship.rect.x = 60 + ship_number * ship.rect.width
             ship.rect.y = 10
             self.ships.add(ship)
         
