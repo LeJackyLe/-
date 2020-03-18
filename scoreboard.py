@@ -74,4 +74,3 @@ class Scoreboard():
         self.screen.blit(self.level_image,self.level_rect)
         # ªÊ÷∆∑…¥¨
         self.ships.draw(self.screen)
-        
